@@ -91,9 +91,8 @@ module.exports = function(app) {
     app.post('/api/createpublicroom', function(req, res) {
         var id = req.body.id;
         var des = req.body.des;
-        var rate = parseFloat(req.body.rate);
 
-        room.create_room(id, des, rate, "public", function(found) {
+        room.create_room(id, des, "public", function(found) {
             console.log(found);
             res.json(found);
         });
@@ -102,21 +101,17 @@ module.exports = function(app) {
     app.post('/api/createprivateroom', function(req, res) {
         var id = req.body.id;
         var des = req.body.des;
-        var rate = parseFloat(req.body.rate);
 
-        room.create_room(id, des, rate, "private", function(found) {
+        room.create_room(id, des, "private", function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
-    app.post('/api/blindkeepalive', function(req, res) {
-        var id = req.body.id;
+    app.get('/api/blindkeepalive/:id', function(req, res) {
+        var id = req.params.id;
 
-        room.blind_keep_alive(id, res, function(found) {
-            console.log(found);
-            res.json(found);
-        });
+        room.blind_keep_alive(id, res);
     });
     
     app.post('/api/helperjoinroom', function(req, res) {
@@ -129,14 +124,11 @@ module.exports = function(app) {
         });
     });
     
-    app.post('/api/helperkeepalive', function(req, res) {
-        var id = req.body.id;
-        var room_id = req.body.room_id;
+    app.get('/api/helperkeepalive/:id/:room_id', function(req, res) {
+        var id = req.params.id;
+        var room_id = req.params.room_id;
 
-        room.helper_keep_alive(id, res, function(found) {
-            console.log(found);
-            res.json(found);
-        });
+        room.helper_keep_alive(id, room_id, res);
     });
     
     app.post('/api/helperleaveroom', function(req, res) {
@@ -221,9 +213,8 @@ module.exports = function(app) {
         var id = req.body.id;
         var friends = req.body.friends.split(',');
         var des = req.body.des;
-        var rate = req.body.rate;
         
-        gcm.call_friends_by_id(id, friends, des, rate, function(found) {
+        gcm.call_friends_by_id(id, friends, des, function(found) {
             console.log(found);
             res.json(found);
         });
