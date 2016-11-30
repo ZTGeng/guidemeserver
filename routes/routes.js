@@ -1,5 +1,5 @@
-var chgpass = require('lib/chgpass');
-var register = require('lib/register');
+// var chgpass = require('lib/chgpass');
+// var register = require('lib/register');
 var login = require('lib/login');
 var room = require('lib/room');
 var friend = require('lib/friend');
@@ -33,7 +33,7 @@ module.exports = function(app) {
         var username = req.body.username;
         var role = req.body.role;
 
-        register.register(email, password, username, role, function(found) {
+        login.register(email, password, username, role, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -42,27 +42,27 @@ module.exports = function(app) {
     app.post('/api/checkemail', function(req, res) {
         var email = req.body.email;
         
-        register.isEmailValid(email, function(found) {
+        login.isEmailFree(email, function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
-    app.post('/api/checkusername', function(req, res) {
-        var username = req.body.username;
+    // app.post('/api/checkusername', function(req, res) {
+    //     var username = req.body.username;
         
-        register.isUsernameValid(username, function(found) {
-            console.log(found);
-            res.json(found);
-        });
-    });
+    //     login.isUsernameFree(username, function(found) {
+    //         console.log(found);
+    //         res.json(found);
+    //     });
+    // });
 
     app.post('/api/chgpass', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
         var opass = req.body.oldpass;
         var npass = req.body.newpass;
 
-        chgpass.cpass(id, opass, npass, function(found) {
+        login.changePassword(token, opass, npass, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -71,7 +71,7 @@ module.exports = function(app) {
     app.post('/api/resetpass', function(req, res) {
         var email = req.body.email;
 
-        chgpass.respass_init(email, function(found) {
+        login.sendResetPasswordEmail(email, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -82,60 +82,60 @@ module.exports = function(app) {
         var code = req.body.code;
         var npass = req.body.newpass;
 
-        chgpass.respass_chg(email, code, npass, function(found) {
+        login.resetPassword(email, code, npass, function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
     app.post('/api/createpublicroom', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
         var des = req.body.des;
 
-        room.create_room(id, des, "public", function(found) {
+        room.create_room(token, des, "public", function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
     app.post('/api/createprivateroom', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
         var des = req.body.des;
 
-        room.create_room(id, des, "private", function(found) {
+        room.create_room(token, des, "private", function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
-    app.get('/api/blindkeepalive/:id', function(req, res) {
-        var id = req.params.id;
+    app.get('/api/blindkeepalive/:token', function(req, res) {
+        var token = req.params.token;
 
-        room.blind_keep_alive(id, res);
+        room.blind_keep_alive(token, res);
     });
     
     app.post('/api/helperjoinroom', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
         var room_id = req.body.room_id;
 
-        room.helper_join_room(id, room_id, res, function(found) {
+        room.helper_join_room(token, room_id, res, function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
-    app.get('/api/helperkeepalive/:id/:room_id', function(req, res) {
-        var id = req.params.id;
+    app.get('/api/helperkeepalive/:token/:room_id', function(req, res) {
+        var token = req.params.token;
         var room_id = req.params.room_id;
 
-        room.helper_keep_alive(id, room_id, res);
+        room.helper_keep_alive(token, room_id, res);
     });
     
     app.post('/api/helperleaveroom', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
         var room_id = req.body.room_id;
         
-        room.leave_room(id, room_id, function(found) {
+        room.leave_room(token, room_id, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -152,18 +152,18 @@ module.exports = function(app) {
     });
     
     app.post('/api/deleteroom', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
 
-        room.delete_room(id, function(found) {
+        room.delete_room(token, function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
     app.post('/api/getroomlist', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
 
-        room.get_rooms(id, function(found) {
+        room.get_rooms(token, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -180,19 +180,19 @@ module.exports = function(app) {
     });
     
     app.post('/api/getfriendlist', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
 
-        friend.get_friends(id, function(found) {
+        friend.get_friends(token, function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
     app.post('/api/updategcmtoken', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
         var gcm_token = req.body.gcm_token;
         
-        gcm.update_token(id, gcm_token, function(found) {
+        gcm.update_token(token, gcm_token, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -210,18 +210,18 @@ module.exports = function(app) {
     // });
     
     app.post('/api/callfriendsbyid', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
         var friends = req.body.friends.split(',');
         var des = req.body.des;
         
-        gcm.call_friends_by_id(id, friends, des, function(found) {
+        gcm.call_friends_by_id(token, friends, des, function(found) {
             console.log(found);
             res.json(found);
         });
     });
     
     app.post('/api/rate', function(req, res) {
-        var rater_id = req.body.id;
+        var rater_id = req.body.token;
         var ratee_id = req.body.ratee_id;
         var rateStr = req.body.rate;
         
@@ -232,9 +232,9 @@ module.exports = function(app) {
     });
     
     app.post('/api/getrate', function(req, res) {
-        var id = req.body.id;
+        var token = req.body.token;
         
-        rate.getRateFloat(id, function(found) {
+        rate.getRateFloat(token, function(found) {
             console.log(found);
             res.json(found);
         });
