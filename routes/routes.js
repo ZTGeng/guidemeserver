@@ -162,7 +162,7 @@ module.exports = function(app) {
         var m_id = req.body.m_id;
         var f_id = req.body.f_id;
 
-        friend.add_friend(m_id, f_id, function(found) {
+        friend.addFriend(m_id, f_id, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -179,9 +179,9 @@ module.exports = function(app) {
     
     app.post('/api/updategcmtoken', function(req, res) {
         var token = req.body.token;
-        var gcm_token = req.body.gcm_token;
+        var gcmToken = req.body.gcm_token;
         
-        gcm.update_token(token, gcm_token, function(found) {
+        gcm.updateToken(token, gcmToken, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -210,11 +210,11 @@ module.exports = function(app) {
     });
     
     app.post('/api/rate', function(req, res) {
-        var rater_id = req.body.token;
-        var ratee_id = req.body.ratee_id;
-        var rateStr = req.body.rate;
+        var token = req.body.token;
+        var helperId = req.body.helper_id;
+        var rate = req.body.rate;
         
-        rate.rate(rater_id, ratee_id, rateStr, function(found) {
+        rate.rate(token, helperId, rate, function(found) {
             console.log(found);
             res.json(found);
         }); 
