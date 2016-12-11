@@ -8,7 +8,6 @@ var request = require('request');
 
 module.exports = function(app) {
 
-
     app.get('/', function(req, res) {
 
         res.end("Node-Android-Project");
@@ -77,7 +76,27 @@ module.exports = function(app) {
         });
     });
     
-    app.post('/api/createpublicroom', function(req, res) {
+    // app.post('/api/createpublicroom', function(req, res) {
+    //     var token = req.body.token;
+    //     var des = req.body.des;
+
+    //     room.createRoom(token, des, "public", function(found) {
+    //         console.log(found);
+    //         res.json(found);
+    //     });
+    // });
+    
+    // app.post('/api/createprivateroom', function(req, res) {
+    //     var token = req.body.token;
+    //     var des = req.body.des;
+
+    //     room.createRoom(token, des, "private", function(found) {
+    //         console.log(found);
+    //         res.json(found);
+    //     });
+    // });
+
+    app.post('/api/callstrangers', function(req, res) {
         var token = req.body.token;
         var des = req.body.des;
 
@@ -86,12 +105,23 @@ module.exports = function(app) {
             res.json(found);
         });
     });
-    
-    app.post('/api/createprivateroom', function(req, res) {
+        
+    app.post('/api/callallfriends', function(req, res) {
         var token = req.body.token;
         var des = req.body.des;
-
-        room.createRoom(token, des, "private", function(found) {
+        
+        gcm.callAllFriends(token, des, function(found) {
+            console.log(found);
+            res.json(found);
+        });
+    });
+    
+    app.post('/api/callfriendsbyid', function(req, res) {
+        var token = req.body.token;
+        var friends = req.body.friends.split(',');
+        var des = req.body.des;
+        
+        gcm.callFriendsById(token, friends, des, function(found) {
             console.log(found);
             res.json(found);
         });
@@ -167,6 +197,16 @@ module.exports = function(app) {
             res.json(found);
         });
     });
+
+    app.post('/api/addfriendbycode', function(req, res) {
+        var token = req.body.token;
+        var inviteCode = req.body.invite_code;
+
+        friend.addFriendByCode(token, inviteCode, function(found) {
+            console.log(found);
+            res.json(found);
+        });
+    });
     
     app.post('/api/getfriendlist', function(req, res) {
         var token = req.body.token;
@@ -182,28 +222,6 @@ module.exports = function(app) {
         var gcmToken = req.body.gcm_token;
         
         gcm.updateToken(token, gcmToken, function(found) {
-            console.log(found);
-            res.json(found);
-        });
-    });
-    
-    // app.post('/api/callfriends', function(req, res) {
-    //     var id = req.body.id;
-    //     var roomId = req.body.roomId;
-    //     var isNavigation = req.body.isNavigation;
-        
-    //     gcm.call_friends(id, roomId, isNavigation, function(found) {
-    //         console.log(found);
-    //         res.json(found);
-    //     });
-    // });
-    
-    app.post('/api/callfriendsbyid', function(req, res) {
-        var token = req.body.token;
-        var friends = req.body.friends.split(',');
-        var des = req.body.des;
-        
-        gcm.callFriendsById(token, friends, des, function(found) {
             console.log(found);
             res.json(found);
         });
