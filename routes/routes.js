@@ -230,9 +230,9 @@ module.exports = function(app) {
     app.post('/api/rate', function(req, res) {
         var token = req.body.token;
         var helperId = req.body.ratee_id;
-        var rate = req.body.rate;
+        var rateStr = req.body.rate;
         
-        rate.rate(token, helperId, rate, function(found) {
+        rate.rate(token, helperId, rateStr, function(found) {
             console.log(found);
             res.json(found);
         }); 
