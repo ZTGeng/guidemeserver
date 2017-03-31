@@ -246,6 +246,15 @@ module.exports = function(app) {
             res.json(found);
         });
     });
+
+    app.post('/api/history', function(req, res) {
+        var token = req.body.token;
+        
+        login.getAddressHistory(token, function(found) {
+            console.log(found);
+            res.json(found);
+        });
+    });
     
 };
 
